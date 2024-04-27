@@ -23,12 +23,14 @@ namespace Business.Concrete
 
         public IResult Add(Car car)
         {
-            throw new NotImplementedException();
+            _carDal.Add(car);
+            return new SuccessResult("Cars Deleted");
         }
 
         public IResult Delete(Car car)
         {
-            throw new NotImplementedException();
+            _carDal.Delete(car);
+            return new SuccessResult("Cars Added");
         }
 
         public IDataResult<List<Car>> GetAll()
@@ -43,7 +45,8 @@ namespace Business.Concrete
 
         public IResult Updated(Car car)
         {
-            throw new NotImplementedException();
+            _carDal.Update(car);
+            return new SuccessResult("Cars Updated");
         }
     }
 }
