@@ -38,10 +38,30 @@ namespace Business.Concrete
             return new DataResult<List<Car>>(_carDal.GetAll(), true, "Cars Listed");
         }
 
-        public List<CarDetailDto> GetCarDetails()
+        public IDataResult<Car> GetById(int carId)
         {
-            return _carDal.GetCarDetails();
+            return new SuccessDataResult<Car>(_carDal.Get(c => c.CarId == carId));
         }
+
+        public IDataResult<List<CarDetailDto>> GetCarDetails(int carId)
+        {
+            var car = _carDal.GetCarDetails(carId); 
+            var carDetails = car.Select(cp => new CarDetailDto
+            {
+               CarId = cp.CarId,
+               CarName = cp.CarName,
+               NumberPlate = cp.NumberPlate,
+               ModelYear = cp.ModelYear,
+               InspectionDate =   cp.InspectionDate,
+               PermitImage = cp.PermitImage,
+
+
+            }).ToList();
+
+            return new SuccessDataResult<List<CarDetailDto>>(carDetails, "Araçlar listelendi.");
+        }
+
+        
 
         public IResult Updated(Car car)
         {

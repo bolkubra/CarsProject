@@ -12,7 +12,7 @@ namespace DataAccess.Concrete.EntityFremework
 {
     public class EfCarDal : EfEntityRepositoryBase<Car, CarProjectContext>, ICarDal
     {
-        public List<CarDetailDto> GetCarDetails()
+        public List<CarDetailDto> GetCarDetails(int carId)
         {
             using (CarProjectContext context = new CarProjectContext())
             {
@@ -31,7 +31,16 @@ namespace DataAccess.Concrete.EntityFremework
             }
         }
 
-        
+        public Car GetById(int carId)
+        {
+            using (CarProjectContext context = new CarProjectContext())
+            {
+                return context.Cars.FirstOrDefault(c => c.CarId == carId);
+            }
+        }
+
+
+
 
     }
 }
