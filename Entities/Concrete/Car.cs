@@ -14,7 +14,7 @@ namespace Entities.Concrete
         public int NumberPlate { get; set; }
         public int ModelYear { get; set; }
         public DateTime InspectionDate { get; set; }
-        public string PermitImage { get; set; }
+        public string permitImage { get; set; }
 
 
     }

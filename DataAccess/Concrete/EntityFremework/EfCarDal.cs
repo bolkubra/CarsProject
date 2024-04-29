@@ -24,7 +24,7 @@ namespace DataAccess.Concrete.EntityFremework
                                  NumberPlate = car.NumberPlate,
                                  ModelYear = car.ModelYear,
                                  InspectionDate = car.InspectionDate,
-                                 PermitImage = car.PermitImage
+                                 PermitImage = car.permitImage
                              };
 
                 return result.ToList();
