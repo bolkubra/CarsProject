@@ -1,6 +1,7 @@
 ﻿using Core.Utilities.Result;
 using Entities.Concrete;
 using Entities.DTOs;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,7 @@ namespace Business.Abstract
         IResult Updated(Car car);
         IDataResult<Car> GetById(int carId);
         IDataResult< List<CarDetailDto>> GetCarDetails( int carId);
+        Task<IResult> AddWithImageAsync(Car car, IFormFile file);
+
     }
 }

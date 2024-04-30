@@ -2,6 +2,9 @@
 using Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
 using DataAccess.Abstract;
+using Microsoft.EntityFrameworkCore;
+using DataAccess.Concrete.EntityFremework;
+using Entities.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -15,6 +18,7 @@ namespace WebAPI.Controllers
         {
             _carService = carService;
         }
+        
 
         [HttpGet]
         public IActionResult Get()
@@ -28,16 +32,28 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("insert")]
-        public IActionResult Insert(Car car)
-        {
-            var result = _carService.Add(car);
-            if (result.Success)
-            {
-                return Ok(result);
+public async Task<IActionResult> Insert([FromForm] CarDetailDto carDto)
+{
+    var file = carDto.PermitImage;
 
-            }
-            return BadRequest(result);
-        }
+    var car = new Car
+    {
+        CarName = carDto.CarName,
+        NumberPlate = carDto.NumberPlate,
+        ModelYear = carDto.ModelYear,
+        InspectionDate = carDto.InspectionDate
+    };
+
+    var result = await _carService.AddWithImageAsync(car, file);
+    if (result.Success)
+    {
+        return Ok(result);
+    }
+    return BadRequest(result);
+}
+
+
+
 
         [HttpPost("delete")]
         public IActionResult Delete(int carId)
@@ -72,6 +88,8 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
+
+       
 
     }
 }

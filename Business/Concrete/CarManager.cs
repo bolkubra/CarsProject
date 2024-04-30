@@ -3,6 +3,7 @@ using Core.Utilities.Result;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,32 @@ namespace Business.Concrete
             _carDal.Add(car);
             return new SuccessResult("Cars Added");
         }
+
+        public async Task<IResult> AddWithImageAsync(Car car, IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    var bytes = memoryStream.ToArray();
+                    // Bayt dizisini Base64'e kodla
+                    car.PermitImage = Convert.ToBase64String(bytes);
+                }
+            }
+
+            // Dosyanın adını al
+            var fileName = Path.GetFileName(file.FileName);
+
+            // Car nesnesine dosya adını atayın
+            car.PermitImage = fileName;
+
+            // Veritabanına kaydetme işlemi
+            _carDal.Add(car);
+            return new SuccessResult("Car Added with Image");
+        }
+
+
 
         public IResult Delete(int carId)
         {

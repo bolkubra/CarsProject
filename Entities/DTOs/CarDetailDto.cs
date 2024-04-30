@@ -1,4 +1,5 @@
 ﻿using Core.Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,10 @@ namespace Entities.DTOs
         public int NumberPlate { get; set; }
         public int ModelYear { get; set; }
         public DateTime InspectionDate { get; set; }
-        public string PermitImage { get; set; }
+        public IFormFile PermitImage { get; set; }
+        
+      
+        
+
     }
 }

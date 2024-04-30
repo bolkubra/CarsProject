@@ -1,7 +1,9 @@
 ﻿using Core.DataAccess.EntityFramework;
+using Core.Utilities.Result;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +26,7 @@ namespace DataAccess.Concrete.EntityFremework
                                  NumberPlate = car.NumberPlate,
                                  ModelYear = car.ModelYear,
                                  InspectionDate = car.InspectionDate,
-                                 PermitImage = car.permitImage
+                                
                              };
 
                 return result.ToList();
@@ -39,8 +41,23 @@ namespace DataAccess.Concrete.EntityFremework
             }
         }
 
+         public async Task<IResult> AddWithImageAsync(Car car, IFormFile file)
+         {
+             if (file != null && file.Length > 0)
+             {
+                 using (var memoryStream = new MemoryStream())
+                 {
+                     await file.CopyToAsync(memoryStream);
+                     var bytes = memoryStream.ToArray();
+                     car.PermitImage = Convert.ToBase64String(bytes);
+                 }
+             }
 
+             Add(car);
+             return new SuccessResult("Car Added with Image");
+         }
 
+       
 
     }
 }
