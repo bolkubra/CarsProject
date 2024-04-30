@@ -28,7 +28,7 @@ namespace Business.Concrete
             return new SuccessResult("Cars Added");
         }
 
-        public async Task<IResult> AddWithImageAsync(Car car, IFormFile file)
+        /*public async Task<IResult> AddWithImageAsync(Car car, IFormFile file)
         {
             if (file != null && file.Length > 0)
             {
@@ -50,6 +50,28 @@ namespace Business.Concrete
             // Veritabanına kaydetme işlemi
             _carDal.Add(car);
             return new SuccessResult("Car Added with Image");
+        }*/
+
+        public async Task<IResult> AddWithImageAsync(CarDetailDto carDto)
+        {
+            var car = new Car
+            {
+                CarName = carDto.CarName,
+                NumberPlate = carDto.NumberPlate,
+                ModelYear = carDto.ModelYear,
+                InspectionDate = carDto.InspectionDate
+            };
+
+            // Resmi sunucuya yükle
+            var imageResult = await UploadImageAsync(carDto.PermitImage);
+
+            if (!imageResult.Success)
+            {
+                return imageResult; // Resim yükleme başarısız olduysa hata döndür
+            }
+
+            // Arabayı veritabanına ekle
+            return await _carDal.AddWithImageAsync(car, carDto.PermitImage);
         }
 
 
@@ -101,5 +123,32 @@ namespace Business.Concrete
             _carDal.Update(car);
             return new SuccessResult("Cars Added");
         }
+
+        public async Task<IResult> UploadImageAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return new ErrorResult("Dosya boş veya seçilmedi.");
+            }
+
+          
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Upload", "Images");
+
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return new SuccessDataResult<string>(fileName, "Resim başarıyla yüklendi.");
+        }
     }
 }
+

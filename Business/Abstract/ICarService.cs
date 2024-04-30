@@ -18,7 +18,10 @@ namespace Business.Abstract
         IResult Updated(Car car);
         IDataResult<Car> GetById(int carId);
         IDataResult< List<CarDetailDto>> GetCarDetails( int carId);
-        Task<IResult> AddWithImageAsync(Car car, IFormFile file);
+        
+        Task  <IResult> UploadImageAsync(IFormFile file);
+        Task <IResult> AddWithImageAsync(CarDetailDto carDto);
+        
 
     }
 }

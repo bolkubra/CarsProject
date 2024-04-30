@@ -48,6 +48,9 @@ namespace WebAPI
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            
+
             app.UseCors("AllowSpecificOrigin");
             if (env.IsDevelopment())
             {
@@ -65,6 +68,8 @@ namespace WebAPI
             {
                 endpoints.MapControllers();
             });
+
+            app.UseStaticFiles();
         }
     }
 }

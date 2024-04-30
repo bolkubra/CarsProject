@@ -57,7 +57,9 @@ namespace DataAccess.Concrete.EntityFremework
              return new SuccessResult("Car Added with Image");
          }
 
-       
-
+        Task<IResult> ICarDal.Add(Car car)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

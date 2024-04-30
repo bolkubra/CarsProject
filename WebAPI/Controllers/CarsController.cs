@@ -32,27 +32,25 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("insert")]
-public async Task<IActionResult> Insert([FromForm] CarDetailDto carDto)
-{
-    var file = carDto.PermitImage;
+        public async Task<IActionResult> Insert([FromForm] CarDetailDto carDto)
+        {
+            if (carDto.PermitImage == null || carDto.PermitImage.Length == 0)
+            {
+                return BadRequest("Resim seçilmedi.");
+            }
 
-    var car = new Car
-    {
-        CarName = carDto.CarName,
-        NumberPlate = carDto.NumberPlate,
-        ModelYear = carDto.ModelYear,
-        InspectionDate = carDto.InspectionDate
-    };
+            // Resmi sunucuya yükle ve arabayı veritabanına ekle
+            var result = await _carService.AddWithImageAsync(carDto);
 
-    var result = await _carService.AddWithImageAsync(car, file);
-    if (result.Success)
-    {
-        return Ok(result);
-    }
-    return BadRequest(result);
-}
-
-
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
 
 
         [HttpPost("delete")]
