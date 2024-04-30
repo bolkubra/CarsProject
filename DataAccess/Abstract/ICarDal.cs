@@ -12,7 +12,7 @@ namespace DataAccess.Abstract
     public interface ICarDal : IEntityRepository<Car>
     {
         List<CarDetailDto> GetCarDetails(int carId);
-        Task <IResult> AddWithImageAsync(Car car, IFormFile file);
+        Task<IResult> AddWithImageAsync(Car car, IFormFile file);
         Task<IResult> Add(Car car);
 
     }

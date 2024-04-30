@@ -52,7 +52,7 @@ namespace Business.Concrete
             return new SuccessResult("Car Added with Image");
         }*/
 
-        public async Task<IResult> AddWithImageAsync(CarDetailDto carDto)
+        public async Task<IResult> AddWithImageAsync(CarDetailDto carDto, string imageName)
         {
             var car = new Car
             {
@@ -63,16 +63,33 @@ namespace Business.Concrete
             };
 
             // Resmi sunucuya yükle
-            var imageResult = await UploadImageAsync(carDto.PermitImage);
+            var imageResultTask = UploadImageAsync(carDto.PermitImage);
+            var imageResult = await imageResultTask;
 
             if (!imageResult.Success)
             {
                 return imageResult; // Resim yükleme başarısız olduysa hata döndür
             }
 
+            // Resim dosya adını Car nesnesine ekle
+            car.PermitImage = imageName; // Dosya adını kullanarak ekleyin
+
             // Arabayı veritabanına ekle
-            return await _carDal.AddWithImageAsync(car, carDto.PermitImage);
+            var addResult = await _carDal.Add(car);
+
+            if (!addResult.Success)
+            {
+                return addResult; // Araba ekleme başarısız olduysa hata döndür
+            }
+
+            return new SuccessResult("Car Added with Image");
         }
+
+
+
+
+
+
 
 
 
@@ -100,15 +117,15 @@ namespace Business.Concrete
 
         public IDataResult<List<CarDetailDto>> GetCarDetails(int carId)
         {
-            var car = _carDal.GetCarDetails(carId); 
+            var car = _carDal.GetCarDetails(carId);
             var carDetails = car.Select(cp => new CarDetailDto
             {
-               CarId = cp.CarId,
-               CarName = cp.CarName,
-               NumberPlate = cp.NumberPlate,
-               ModelYear = cp.ModelYear,
-               InspectionDate =   cp.InspectionDate,
-               PermitImage = cp.PermitImage,
+                CarId = cp.CarId,
+                CarName = cp.CarName,
+                NumberPlate = cp.NumberPlate,
+                ModelYear = cp.ModelYear,
+                InspectionDate = cp.InspectionDate,
+                PermitImage = cp.PermitImage,
 
 
             }).ToList();
@@ -116,7 +133,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CarDetailDto>>(carDetails, "Araçlar listelendi.");
         }
 
-        
+
 
         public IResult Updated(Car car)
         {
@@ -126,29 +143,37 @@ namespace Business.Concrete
 
         public async Task<IResult> UploadImageAsync(IFormFile file)
         {
-            if (file == null || file.Length == 0)
+            try
             {
-                return new ErrorResult("Dosya boş veya seçilmedi.");
+                if (file == null || file.Length == 0)
+                {
+                    return new ErrorResult("Dosya boş veya seçilmedi.");
+                }
+
+                var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Upload", "Images");
+
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+
+                var filePath = Path.Combine(uploadPath, file.FileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return new SuccessDataResult<string>(file.FileName, "Resim başarıyla yüklendi.");
             }
-
-          
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Upload", "Images");
-
-            if (!Directory.Exists(uploadPath))
+            catch (Exception ex)
             {
-                Directory.CreateDirectory(uploadPath);
+                return new ErrorResult($"Resim yükleme sırasında bir hata oluştu: {ex.Message}");
             }
-
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var filePath = Path.Combine(uploadPath, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            return new SuccessDataResult<string>(fileName, "Resim başarıyla yüklendi.");
         }
+
+
+
+
     }
 }
-

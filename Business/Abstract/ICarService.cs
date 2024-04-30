@@ -2,10 +2,7 @@
 using Entities.Concrete;
 using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Business.Abstract
@@ -17,11 +14,9 @@ namespace Business.Abstract
         IResult Delete(int carId);
         IResult Updated(Car car);
         IDataResult<Car> GetById(int carId);
-        IDataResult< List<CarDetailDto>> GetCarDetails( int carId);
-        
-        Task  <IResult> UploadImageAsync(IFormFile file);
-        Task <IResult> AddWithImageAsync(CarDetailDto carDto);
-        
+        IDataResult<List<CarDetailDto>> GetCarDetails(int carId);
 
+        Task<IResult> UploadImageAsync(IFormFile file);
+        Task<IResult> AddWithImageAsync(CarDetailDto carDto, string imageName);
     }
 }

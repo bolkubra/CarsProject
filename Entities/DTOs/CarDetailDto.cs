@@ -16,9 +16,10 @@ namespace Entities.DTOs
         public int ModelYear { get; set; }
         public DateTime InspectionDate { get; set; }
         public IFormFile PermitImage { get; set; }
-        
-      
-        
+        public string ImageName { get; set; }
+
+
+
 
     }
 }

@@ -26,7 +26,7 @@ namespace DataAccess.Concrete.EntityFremework
                                  NumberPlate = car.NumberPlate,
                                  ModelYear = car.ModelYear,
                                  InspectionDate = car.InspectionDate,
-                                
+
                              };
 
                 return result.ToList();
@@ -41,25 +41,39 @@ namespace DataAccess.Concrete.EntityFremework
             }
         }
 
-         public async Task<IResult> AddWithImageAsync(Car car, IFormFile file)
-         {
-             if (file != null && file.Length > 0)
-             {
-                 using (var memoryStream = new MemoryStream())
-                 {
-                     await file.CopyToAsync(memoryStream);
-                     var bytes = memoryStream.ToArray();
-                     car.PermitImage = Convert.ToBase64String(bytes);
-                 }
-             }
-
-             Add(car);
-             return new SuccessResult("Car Added with Image");
-         }
-
-        Task<IResult> ICarDal.Add(Car car)
+        public async Task<IResult> AddWithImageAsync(Car car, IFormFile file)
         {
-            throw new NotImplementedException();
+            if (file != null && file.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    var bytes = memoryStream.ToArray();
+                    car.PermitImage = Convert.ToBase64String(bytes);
+                }
+            }
+
+            Add(car);
+            return new SuccessResult("Car Added with Image");
         }
+
+        public async Task<IResult> Add(Car car)
+        {
+            try
+            {
+                using (var context = new CarProjectContext())
+                {
+                    context.Cars.Add(car);
+                    await context.SaveChangesAsync();
+                }
+
+                return new SuccessResult("Car Added");
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResult($"Error while adding car: {ex.Message}");
+            }
+        }
+
     }
 }

@@ -10,7 +10,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CarsController  : ControllerBase
+    public class CarsController : ControllerBase
     {
 
         private readonly ICarService _carService;
@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         {
             _carService = carService;
         }
-        
+
 
         [HttpGet]
         public IActionResult Get()
@@ -31,6 +31,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+
         [HttpPost("insert")]
         public async Task<IActionResult> Insert([FromForm] CarDetailDto carDto)
         {
@@ -39,8 +40,10 @@ namespace WebAPI.Controllers
                 return BadRequest("Resim seçilmedi.");
             }
 
-            // Resmi sunucuya yükle ve arabayı veritabanına ekle
-            var result = await _carService.AddWithImageAsync(carDto);
+            // Resim sunucuya yükle ve arabayı veritabanına ekle
+            var result = await _carService.AddWithImageAsync(carDto, carDto.PermitImage.FileName);
+
+            // imageName parametresini ImageName property'sinden alın
 
             if (result.Success)
             {
@@ -51,6 +54,9 @@ namespace WebAPI.Controllers
                 return BadRequest(result);
             }
         }
+
+
+
 
 
         [HttpPost("delete")]
@@ -87,8 +93,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-       
+
 
     }
 }
-
