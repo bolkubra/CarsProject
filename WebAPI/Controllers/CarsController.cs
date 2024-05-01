@@ -40,10 +40,10 @@ namespace WebAPI.Controllers
                 return BadRequest("Resim seçilmedi.");
             }
 
-            // Resim sunucuya yükle ve arabayı veritabanına ekle
+            // Resim sunucuya yükleme ve arabayı veritabanına ekleme işlemi
             var result = await _carService.AddWithImageAsync(carDto, carDto.PermitImage.FileName);
 
-            // imageName parametresini ImageName property'sinden alın
+            
 
             if (result.Success)
             {

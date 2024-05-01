@@ -54,7 +54,7 @@ namespace DataAccess.Concrete.EntityFremework
             }
 
             Add(car);
-            return new SuccessResult("Car Added with Image");
+            return new SuccessResult("Araç Resim ile Eklendi");
         }
 
         public async Task<IResult> Add(Car car)
@@ -67,7 +67,7 @@ namespace DataAccess.Concrete.EntityFremework
                     await context.SaveChangesAsync();
                 }
 
-                return new SuccessResult("Car Added");
+                return new SuccessResult("Araç Bilgisi Eklendi");
             }
             catch (Exception ex)
             {
